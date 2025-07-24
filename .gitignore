@@ -1,0 +1,10 @@
+# Rails
+/log/*.log
+/tmp
+/vendor/bundle
+.byebug_history
+
+# React/Vite
+/node_modules
+/dist
+*.env.local
