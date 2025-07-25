@@ -2,7 +2,24 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
 
   def index
-    render json: User.all, status: :ok
+    users = User.all
+    allowed_sorts = %w[name email access_level]
+
+    users = users.by_name(params[:name]) if params[:name].present?
+    users = users.by_email(params[:email]) if params[:email].present?
+
+    if params[:access_level].present? && User.access_levels.key?(params[:access_level])
+      users = users.where(access_level: params[:access_level])
+    end
+
+    if params[:sort].present? && allowed_sorts.include?(params[:sort])
+      direction = params[:direction].to_s.downcase == "desc" ? :desc : :asc
+      users = users.order(params[:sort] => direction)
+    else
+      users = users.order(:id)
+    end
+
+    render json: users, status: :ok
   end
 
   def show
